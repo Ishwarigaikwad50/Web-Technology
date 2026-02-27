@@ -1,0 +1,6 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    padding-top: 76px;
+    /* --- ADD THIS LINE --- */
+    background-color: #afcbe8; /* A soft, professional light blue-gray */
+}
