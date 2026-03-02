@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Addition Calculator</title>
+</head>
+<body style="font-family: Arial; padding: 40px;">
+
+    <h3>Simple Calculator</h3>
+
+    <label>First No:</label><br>
+    <input type="text" id="num1"><br><br>
+
+    <label>Second No:</label><br>
+    <input type="text" id="num2"><br><br>
+
+    <button onclick="addNumbers()">Addition</button>
+
+    <br><br>
+
+    <label><b>Addition is:</b></label><br>
+    <input type="text" id="result" readonly>
+
+    <script>
+        function addNumbers() {
+            let a = document.getElementById("num1").value;
+            let b = document.getElementById("num2").value;
+
+            // Validation: empty input
+            if (a === "" || b === "") {
+                alert("Please enter both numbers");
+                return;
+            }
+
+            // Validation: numeric check
+            if (isNaN(a) || isNaN(b)) {
+                alert("Please enter valid numeric values only");
+                return;
+            }
+
+            let sum = Number(a) + Number(b);
+
+            // Show result
+            document.getElementById("result").value = sum;
+
+            // Alert output
+            alert("Addition Successful!");
+        }
+    </script>
+
+</body>
+</html>
