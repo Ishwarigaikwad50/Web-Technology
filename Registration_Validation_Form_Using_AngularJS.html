@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="authApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS Login & Registration</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding-top: 50px; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 350px; }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #666; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #218838; }
+        .toggle-link { text-align: center; margin-top: 15px; display: block; color: #007bff; cursor: pointer; text-decoration: underline; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center; }
+        .alert-success { background-color: #d4edda; color: #155724; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body ng-controller="AuthController">
+
+    <div class="container">
+        <div class="alert" ng-class="{'alert-success': isSuccess, 'alert-danger': !isSuccess}" ng-show="message">
+            {{ message }}
+        </div>
+
+        <div ng-show="isLoginView">
+            <h2>Login</h2>
+            <form ng-submit="login()">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" ng-model="loginData.username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" ng-model="loginData.password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <span class="toggle-link" ng-click="toggleView()">Need an account? Register here</span>
+        </div>
+
+        <div ng-hide="isLoginView">
+            <h2>Register</h2>
+            <form ng-submit="register()">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" ng-model="registerData.firstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" ng-model="registerData.lastName" required>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" ng-model="registerData.username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" ng-model="registerData.password" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <span class="toggle-link" ng-click="toggleView()">Already have an account? Login here</span>
+        </div>
+    </div>
+
+    <script>
+        // 1. Define the AngularJS Application Module
+        var app = angular.module('authApp', []);
+
+        // 2. Define the Controller
+        app.controller('AuthController', function($scope, $timeout) {
+            
+            // State variables
+            $scope.isLoginView = true; // Start on the login page
+            $scope.message = "";
+            $scope.isSuccess = true;
+            
+            // Models for our forms
+            $scope.loginData = {};
+            $scope.registerData = {};
+
+            // Mock database (in a real app, this goes to a backend via $http)
+            $scope.usersDatabase = [];
+
+            // Function to toggle between Login and Register views
+            $scope.toggleView = function() {
+                $scope.isLoginView = !$scope.isLoginView;
+                $scope.message = ""; // Clear messages when switching views
+                $scope.loginData = {};
+                $scope.registerData = {};
+            };
+
+            // Function to handle Registration
+            $scope.register = function() {
+                // Check if username already exists
+                var userExists = $scope.usersDatabase.some(function(user) {
+                    return user.username === $scope.registerData.username;
+                });
+
+                if (userExists) {
+                    $scope.showMessage("Username already taken!", false);
+                } else {
+                    // Save to mock database
+                    $scope.usersDatabase.push(angular.copy($scope.registerData));
+                    $scope.showMessage("Registration successful! You can now log in.", true);
+                    
+                    // Clear form and switch to login after a short delay
+                    $timeout(function() {
+                        $scope.toggleView();
+                    }, 1500);
+                }
+            };
+
+            // Function to handle Login
+            $scope.login = function() {
+                // Find user in mock database
+                var foundUser = $scope.usersDatabase.find(function(user) {
+                    return user.username === $scope.loginData.username && 
+                           user.password === $scope.loginData.password;
+                });
+
+                if (foundUser) {
+                    $scope.showMessage("Welcome, " + foundUser.firstName + " " + foundUser.lastName + "!", true);
+                    // Here you would normally redirect to a dashboard using $window or $location
+                } else {
+                    $scope.showMessage("Invalid username or password.", false);
+                }
+            };
+
+            // Helper function to show alerts
+            $scope.showMessage = function(msg, success) {
+                $scope.message = msg;
+                $scope.isSuccess = success;
+            };
+        });
+    </script>
+</body>
+</html>
